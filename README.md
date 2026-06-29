@@ -13,11 +13,18 @@ Hoạt động với gói miễn phí của Cloudflare (lên đến 300.000 doma
 
 ## Cài đặt
 
-### Bước 1 — Fork repo
+### Bước 1 — Kích hoạt Zero Trust
 
-Bấm **Fork → Create fork** ở góc trên bên phải.
+- Vào [one.dash.cloudflare.com](https://one.dash.cloudflare.com) và đăng nhập
+- Làm theo hướng dẫn để kích hoạt gói Zero Trust Free
 
-### Bước 2 — Lấy API Token + Account ID từ Cloudflare
+### Bước 2 — Tạo DNS Location
+
+- Vào **Gateway → DNS Locations → Add a location**
+- Đặt tên tùy ý → **Add location**
+- Copy 2 địa chỉ DNS được cấp, set vào router hoặc thiết bị
+
+### Bước 3 — Lấy API Token + Account ID
 
 **Account ID:**
 - Vào [dash.cloudflare.com](https://dash.cloudflare.com)
@@ -31,7 +38,11 @@ Bấm **Fork → Create fork** ở góc trên bên phải.
 - Bấm **Continue to summary → Create Token**
 - Copy token lại (chỉ hiện 1 lần duy nhất)
 
-### Bước 3 — Thêm secrets vào repo
+### Bước 4 — Fork repo
+
+Bấm **Fork → Create fork** ở góc trên bên phải.
+
+### Bước 5 — Thêm secrets vào repo
 
 Vào repo vừa fork → **Settings → Secrets and variables → Actions → New repository secret**
 
@@ -39,14 +50,8 @@ Thêm 2 secrets:
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-### Bước 4 — Chạy workflow
+### Bước 6 — Chạy workflow
 
 Vào tab **Actions → Update blocklists → Run workflow**
 
-Chờ khoảng 1-2 phút.
-
-### Bước 5 — Lấy địa chỉ DNS
-
-Vào [one.dash.cloudflare.com](https://one.dash.cloudflare.com) → **Gateway → DNS Locations → Add a location** → đặt tên tùy ý → **Add location** → copy 2 địa chỉ DNS.
-
-Set 2 địa chỉ đó vào router hoặc thiết bị là xong. Blocklist tự cập nhật mỗi thứ 2 hàng tuần.
+Chờ khoảng 1-2 phút. Blocklist tự cập nhật mỗi thứ 2 hàng tuần.
