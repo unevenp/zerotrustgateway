@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dry": "node index.js --dry",
+    "delete": "node index.js --delete"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
