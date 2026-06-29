@@ -1,85 +1,52 @@
-# Cloudflare Gateway Ad Blocker
+# Zerotrustgateway
 
-Block ads and trackers at the DNS level using [Cloudflare Zero Trust Gateway](https://developers.cloudflare.com/cloudflare-one/policies/gateway/) — free, no device config needed beyond changing your DNS server.
+Chặn quảng cáo ở cấp DNS bằng Cloudflare Zero Trust Gateway — miễn phí, không cần cài app hay extension.
 
-Works with Cloudflare's free tier (up to 300,000 blocked domains).
+Hoạt động với gói miễn phí của Cloudflare (lên đến 300.000 domain bị chặn).
 
-## How it works
+## Cách hoạt động
 
-1. Downloads domain blocklists from the internet
-2. Parses and deduplicates them, filtering out any allowlisted domains
-3. Uploads them to Cloudflare Gateway as "Lists"
-4. Creates a Gateway DNS policy that blocks all listed domains
+1. Tải danh sách domain cần chặn từ internet
+2. Lọc và loại bỏ trùng lặp, loại bỏ các domain được cho phép
+3. Upload lên Cloudflare Gateway dưới dạng "Lists"
+4. Tạo Gateway DNS policy chặn toàn bộ các domain trong danh sách
 
-## Setup
+## Cài đặt
 
-### 1. Create a Cloudflare API token
+### Bước 1 — Fork repo
 
-Go to [Cloudflare Dashboard → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens) and create a token with:
+Bấm **Fork → Create fork** ở góc trên bên phải.
 
-- **Zero Trust: Edit** permission
-- Scoped to your account
+### Bước 2 — Lấy API Token + Account ID từ Cloudflare
 
-### 2. Configure
+**Account ID:**
+- Vào [dash.cloudflare.com](https://dash.cloudflare.com)
+- Nhìn sidebar bên phải, copy **Account ID**
 
-```bash
-cp .env.example .env
-# Fill in CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
-```
+**API Token:**
+- Vào [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
+- Bấm **Create Token → Create Custom Token**
+- Đặt tên tùy ý
+- Mục **Permissions** chọn: `Zero Trust` → `Edit`
+- Bấm **Continue to summary → Create Token**
+- Copy token lại (chỉ hiện 1 lần duy nhất)
 
-### 3. Set Cloudflare Gateway as your DNS
+### Bước 3 — Thêm secrets vào repo
 
-In Cloudflare Zero Trust Dashboard → Settings → Gateway → DNS Locations, create a location and use the provided DNS addresses on your router or device.
+Vào repo vừa fork → **Settings → Secrets and variables → Actions → New repository secret**
 
-### 4. Run
+Thêm 2 secrets:
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
 
-```bash
-npm install
-npm start
-```
+### Bước 4 — Chạy workflow
 
-## Usage
+Vào tab **Actions → Update blocklists → Run workflow**
 
-| Command | Description |
-|---|---|
-| `npm start` | Download lists and sync to Cloudflare |
-| `npm run dry` | Preview changes without touching Cloudflare |
-| `npm run delete` | Remove all CGPS lists and rules from Cloudflare |
+Chờ khoảng 1-2 phút.
 
-## Custom filter lists
+### Bước 5 — Lấy địa chỉ DNS
 
-Set `BLOCKLIST_URLS` and/or `ALLOWLIST_URLS` in your `.env` file (one URL per line):
+Vào [one.dash.cloudflare.com](https://one.dash.cloudflare.com) → **Gateway → DNS Locations → Add a location** → đặt tên tùy ý → **Add location** → copy 2 địa chỉ DNS.
 
-```env
-BLOCKLIST_URLS=https://example.com/blocklist.txt
-  https://example.com/another.txt
-```
-
-Leave blank to use the built-in defaults ([OISD small](https://small.oisd.nl/) + [AdAway](https://adaway.org/hosts.txt)).
-
-## Automation with GitHub Actions
-
-Create a workflow to auto-update weekly:
-
-```yaml
-name: Update blocklists
-on:
-  schedule:
-    - cron: "0 3 * * 1"  # Every Monday at 3am
-  workflow_dispatch:
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install && npm start
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-```
-
-Add your credentials as repository secrets under Settings → Secrets.
+Set 2 địa chỉ đó vào router hoặc thiết bị là xong. Blocklist tự cập nhật mỗi thứ 2 hàng tuần.
